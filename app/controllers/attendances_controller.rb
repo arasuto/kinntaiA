@@ -20,4 +20,8 @@ UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してくださ
     end
     redirect_to @user
   end
+  
+  
+  def edit_one_month
+  end
 end
