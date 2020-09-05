@@ -1,0 +1,8 @@
+<%= search_form_for @q do |f| %>
+
+  <!--# nameに含まれているか検索-->
+    <p>ユーザー検索</p>
+    <%= f.search_field :name_cont, placeholder: "ユーザー名を検索...", class: "form-control" %>
+      <%= f.submit "検索", class: "btn btn-primary" %>
+      
+  <% end %>

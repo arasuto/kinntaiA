@@ -29,32 +29,42 @@ class AttendancesController < ApplicationController
   def edit_one_month
   end
 
- def update_one_month
-  ActiveRecord::Base.transaction do # トランザクションを開始します。
-    attendances_params.each do |id, item|
-      attendance = Attendance.find(id)
-      attendance.update_attributes!(item)
+  # 勤怠編集の更新処理
+  def update_one_month
+    ActiveRecord::Base.transaction do # トランザクションを開始します。
+      attendances_params.each do |id, item| # attendances_paramsから1日分取り出す。idはAttendanceのid、itemはストロングパラメーターの項目（:started_at, :finished_at, :note）
+        if item[:started_at].present? && item[:finished_at].blank?
+          flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+          redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+        end
+        attendance = Attendance.find(id) # 更新するAttendanceのレコードを特定する
+        attendance.update_attributes!(item) # 上記で特定したAttendanceのレコードをitemの項目で更新する
+      end
     end
+    flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
+    redirect_to user_url(date: params[:date])
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+    redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
   end
-  flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
-  redirect_to user_url(date: params[:date])
- rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-  flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-  redirect_to attendances_edit_one_month_user_url(date: params[:date])
- end
+ 
+ 
   private
     # 1ヶ月分の勤怠情報を扱います。
+    # 勤怠編集処理用のストロングパラメーター
     def attendances_params
       params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
     end
     
-    # beforeフィルター	
-# 管理権限者、または現在ログインしているユーザーを許可します。	
-def admin_or_correct_user	
-@user = User.find(params[:user_id]) if @user.blank?	
-unless current_user?(@user) || current_user.admin?	
-flash[:danger] = "編集権限がありません。"	
-redirect_to(root_url)	
-end	
-end	
+  # beforeフィルター
+  
+    # 管理権限者、または現在ログインしているユーザーを許可します。	
+    def admin_or_correct_user	
+      @user = User.find(params[:user_id]) if @user.blank?	
+      unless current_user?(@user) || current_user.admin?	
+        flash[:danger] = "編集権限がありません。"	
+        redirect_to(root_url)	
+      end	
+    end	
+    
 end

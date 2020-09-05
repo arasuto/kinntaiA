@@ -48,6 +48,7 @@ module SessionsHelper
   # 現在ログイン中のユーザーがいればtrue、そうでなければfalseを返します。
   def logged_in?
     !current_user.nil?
+    # nilはなし 現在
   end
 
   # 記憶しているURL(またはデフォルトURL)にリダイレクトします。
