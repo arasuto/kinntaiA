@@ -5,19 +5,26 @@ ja:
       attendance: 勤怠
     attributes:
         user:
+          uid: カードID
+          employee_number: 社員番号
           id: ID
           name: 名前
           email: メールアドレス
-          department: 所属
+          affiliation: 所属
           basic_time: 基本時間
           work_time: 勤務時間
+          basic_work_time: 基本労働時間
+          
           password: パスワード
           password_confirmation: パスワード再入力
           created_at: 作成日
           updated_at: 更新日
-        attendance:
+        attendance:   
           worked_on: 日付
           started_at: 出勤時間
           finished_at: 退勤時間
           note: 備考
           user: ユーザーID
+          scheduled_end_time: 終了予定時間
+          next_day: 翌日
+          business_processing_content: 業務処理内容

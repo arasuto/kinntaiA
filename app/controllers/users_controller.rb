@@ -1,13 +1,18 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, ]
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
-  before_action :correct_user, only: [:edit, :update]
+  before_action :correct_user, only: [:edit]
   before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info]
   before_action :set_one_month, only: :show
 
   def index
     @q = User.ransack(params[:q])
     @users = @q.result(distinct: true).order(name: :asc).page(params[:page])
+  end
+  
+  def import
+    User.import(params[:file])
+    redirect_to users_url
   end
 
   def show
@@ -59,6 +64,18 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
+  def edit_overwork_requsest
+    @day = Date.parse(params[:day])
+    @attendance = @user.attendances.find_by(worked_on: @day)
+  end
+  
+  def update_overwork_request
+    @attendance = @user.attendances.find_by(worked_on: @day)
+    @user.update_attributes(overwork_params)
+    fiash[:success] = "残業申請しました。"
+    redirect_to @user
+  end
+  
   private
   
   def admin_or_correct_user
@@ -72,6 +89,11 @@ class UsersController < ApplicationController
 
     def basic_info_params
       params.require(:user).permit(:department, :basic_time, :work_time)
+    end
+    
+    def basic_info_params
+      params.require(:user).permit(:name, :email, :affiliation, :employee_number, :uid, :password,
+                                   :basic_work_time, :designated_work_start_time, :designated_work_end_time)
     end
     
     

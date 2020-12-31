@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200505113542) do
+ActiveRecord::Schema.define(version: 20201222141031) do
+
+  create_table "articles", force: :cascade do |t|
+    t.string "title"
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "attendances", force: :cascade do |t|
     t.date "worked_on"
@@ -20,6 +27,10 @@ ActiveRecord::Schema.define(version: 20200505113542) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "scheduled_end_time"
+    t.string "next_day"
+    t.string "business_processing_content"
+    t.integer "overtime_superior"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -32,8 +43,15 @@ ActiveRecord::Schema.define(version: 20200505113542) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2020-08-31 23:00:00"
-    t.datetime "work_time", default: "2020-08-31 22:30:00"
+    t.datetime "basic_time", default: "2020-12-30 23:00:00"
+    t.datetime "work_time", default: "2020-12-30 22:30:00"
+    t.string "affiliation"
+    t.string "employee_number"
+    t.string "uid"
+    t.datetime "designated_work_start_time"
+    t.datetime "designated_work_end_time"
+    t.datetime "basic_work_time"
+    t.boolean "superior"
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
